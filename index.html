@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroScan - Профессиональные услуги БПЛА</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Preloader -->
+    <!-- <div class="preloader" id="preloader"> --> (потом убрать комменты)
+        <!-- <div class="preloader-content"> -->
+            <!-- <div class="drone-loader"> -->
+                <!-- <div class="drone-body"> -->
+                    <!-- <div class="propeller left"></div> -->
+                    <!-- <div class="propeller right"></div> -->
+                <!-- </div> -->
+            <!-- </div> -->
+            <!-- <h1>AeroScan</h1> -->
+            <!-- <p>Запускаем ваш бизнес в новое измерение</p> -->
+        <!-- </div> -->
+    <!-- </div> -->
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-drone"></i>
+                <span>AeroScan</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#services" class="nav-link">Услуги</a>
+                <a href="#technology" class="nav-link">Технологии</a>
+                <a href="#projects" class="nav-link">Проекты</a>
+                <a href="#pricing" class="nav-link">Стоимость</a>
+                <a href="#contact" class="nav-link">Контакты</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-secondary">+7 (999) 123-45-67</button>
+                <button class="btn-primary" id="consultBtn">Заказать консультацию</button>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-background">
+            <div class="floating-drone" id="floatingDrone">
+                <div class="drone-3d">
+                    <img src="1.png.webp" alt="Дрон" class="drone-img">
+                </div>
+            </div>
+            <div class="hero-particles" id="heroParticles"></div>
+        </div>
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span class="title-line">Профессиональные</span>
+                <span class="title-line accent">услуги БПЛА</span>
+                <span class="title-line">для вашего бизнеса</span>
+            </h1>
+            <p class="hero-subtitle">Аэрофотосъемка, картография, мониторинг и аналитика с применением современных дронов</p>
+            <div class="hero-stats">
+                <div class="stat">
+                    <div class="stat-number" data-target="500">0</div>
+                    <div class="stat-label">выполненных проектов</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" data-target="15000">0</div>
+                    <div class="stat-label">часов налета</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number" data-target="98">0</div>
+                    <div class="stat-label">% клиентов довольны</div>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <button class="btn-primary large" id="heroCta">
+                    <span>Рассчитать стоимость</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="btn-play" id="watchVideo">
+                    <div class="play-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <span>Смотреть видео</span>
+                </button>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+            <span>Листайте вниз</span>
+        </div>
+    </section>
+
+    <!-- Technology Section -->
+    <section class="technology" id="technology">
+        <div class="container">
+            <div class="tech-content">
+                <div class="tech-info">
+                    <h2>Современные технологии</h2>
+                    <p>Используем только профессиональное оборудование и программное обеспечение</p>
+                    <div class="tech-features">
+                        <div class="tech-feature">
+                            <i class="fas fa-microchip"></i>
+                            <div>
+                                <h4>DJI Enterprise</h4>
+                                <p>Флагманские дроны для профессионального использования</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature">
+                            <i class="fas fa-thermal"></i>
+                            <div>
+                                <h4>Тепловизоры</h4>
+                                <p>Съемка в инфракрасном диапазоне для любых условий</p>
+                            </div>
+                        </div>
+                        <div class="tech-feature">
+                            <i class="fas fa-software"></i>
+                            <div>
+                                <h4>Pix4D, Agisoft</h4>
+                                <p>Профессиональное ПО для обработки данных</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tech-visual">
+                    <div class="drone-showcase">
+                        <div class="drone-model" id="droneModel">
+                            <i class="fas fa-drone"></i>
+                        </div>
+                        <div class="tech-specs">
+                            <div class="spec">
+                                <span class="spec-value">7 км</span>
+                                <span class="spec-label">Дальность полета</span>
+                            </div>
+                            <div class="spec">
+                                <span class="spec-value">45 мин</span>
+                                <span class="spec-label">Время полета</span>
+                            </div>
+                            <div class="spec">
+                                <span class="spec-value">4K</span>
+                                <span class="spec-label">Разрешение камеры</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Pricing Carousel Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Наши услуги и цены</h2>
+                <p class="section-subtitle">Профессиональные решения для вашего бизнеса с гибкой системой pricing</p>
+            </div>
+        
+            <div class="pricing-carousel">
+                <div class="carousel-container" id="pricingCarousel">
+                <!-- Slide 1 -->
+                    <div class="pricing-card">
+                        <div class="card-image">
+                            <img src="2.jpg" alt="Мониторинг строительных объектов">
+                            <div class="card-badge">Популярно</div>
+                        </div>
+                        <div class="card-content">
+                            <h3>Мониторинг строительных объектов</h3>
+                            <p>Регулярный контроль прогресса строительства, объемов работ и соблюдения сроков</p>
+                        
+                            <div class="price-tiers">
+                                <div class="price-tier">
+                                    <span class="tier-name">Разовый заказ</span>
+                                    <span class="tier-price">4 900 - 14 900 ₽</span>
+                                    <span class="tier-note">за вылет</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Абонемент</span>
+                                    <span class="tier-price">24 900 - 74 900 ₽</span>
+                                    <span class="tier-note">до 8 вылетов</span>
+                                </div>
+                            </div>
+                        
+                            <ul class="service-features">
+                                <li>Прогресс строительства</li>
+                                <li>Контроль объемов работ</li>
+                                <li>Фото/видео отчетность</li>
+                                <li>3D моделирование</li>
+                            </ul>
+                        
+                            <button class="btn-primary full-width">
+                                <span>Заказать услугу</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- Slide 2 -->
+                    <div class="pricing-card">
+                        <div class="card-image">
+                            <img src="3.jpg" alt="Топографическая съемка">
+                        </div>
+                        <div class="card-content">
+                            <h3>Топографическая съемка</h3>
+                            <p>Высокоточная съемка местности для создания карт и проектной документации</p>
+                        
+                            <div class="price-tiers">
+                                <div class="price-tier">
+                                    <span class="tier-name">Разовый заказ</span>
+                                    <span class="tier-price">14 900 - 39 000 ₽</span>
+                                    <span class="tier-note">с облета</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Абонемент</span>
+                                    <span class="tier-price">79 000 - 190 000 ₽</span>
+                                    <span class="tier-note">до 8 вылетов</span>
+                                </div>
+                            </div>
+                        
+                            <ul class="service-features">
+                                <li>Ортофотопланы</li>
+                                <li>Цифровые модели рельефа</li>
+                                <li>Топографические карты</li>
+                                <li>Геодезическая привязка</li>
+                            </ul>
+                        
+                            <button class="btn-primary full-width">
+                                <span>Заказать услугу</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- Slide 3 -->
+                    <div class="pricing-card">
+                        <div class="card-image">
+                            <img src="4.jpg" alt="Высокоточное сканирование">
+                            <div class="card-badge">Премиум</div>
+                        </div>
+                        <div class="card-content">
+                            <h3>Высокоточное сканирование</h3>
+                            <p>Лазерное сканирование для создания точных 3D моделей объектов и территорий</p>
+                        
+                            <div class="price-tiers">
+                                <div class="price-tier">
+                                    <span class="tier-name">Разовый заказ</span>
+                                    <span class="tier-price">29 000 - 99 000 ₽</span>
+                                    <span class="tier-note">индивидуально</span>
+                                </div>
+                            </div>
+                        
+                            <ul class="service-features">
+                                <li>Лазерное сканирование</li>
+                                <li>Точность до 1 см</li>
+                                <li>3D модели объектов</li>
+                                <li>Cloud Point данные</li>
+                            </ul>
+                        
+                            <button class="btn-primary full-width">
+                                <span>Заказать услугу</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- Slide 4 -->
+                    <div class="pricing-card">
+                        <div class="card-image">
+                            <img src="5.jpg" alt="Аэрофотомоделирование">
+                        </div>
+                        <div class="card-content">
+                            <h3>Аэрофотомоделирование</h3>
+                            <p>Создание детализированных 3D моделей по данным аэрофотосъемки</p>
+                        
+                            <div class="price-tiers">
+                                <div class="price-tier">
+                                    <span class="tier-name">Разовый заказ</span>
+                                    <span class="tier-price">19 000 - 59 000 ₽</span>
+                                    <span class="tier-note">под проект</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Абонемент</span>
+                                    <span class="tier-price">99 000 - 290 000 ₽</span>
+                                    <span class="tier-note">до 8 вылетов</span>
+                                </div>
+                            </div>
+                        
+                            <ul class="service-features">
+                                <li>3D текстурированные модели</li>
+                                <li>VR/AR готовность</li>
+                                <li>Интерактивные туры</li>
+                                <li>Архитектурная визуализация</li>
+                            </ul>
+                        
+                            <button class="btn-primary full-width">
+                                <span>Заказать услугу</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                <!-- Slide 5 -->
+                    <div class="pricing-card">
+                        <div class="card-image">
+                            <img src="6.jpg" alt="Контроль охраны труда">
+                        </div>
+                        <div class="card-content">
+                            <h3>Контроль охраны труда</h3>
+                            <p>Мониторинг соблюдения норм безопасности на строительных площадках</p>
+                        
+                            <div class="price-tiers">
+                                <div class="price-tier">
+                                    <span class="tier-name">Разовый заказ</span>
+                                    <span class="tier-price">7 900 - 19 000 ₽</span>
+                                    <span class="tier-note">за проверку</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Абонемент</span>
+                                    <span class="tier-price">34 900 - 89 000 ₽</span>
+                                    <span class="tier-note">до 8 вылетов</span>
+                                </div>
+                            </div>
+                        
+                            <ul class="service-features">
+                                <li>Контроль СИЗ</li>
+                                <li>Безопасность работ</li>
+                                <li>Протокол нарушений</li>
+                                <li>Рекомендации</li>
+                            </ul>
+                        
+                            <button class="btn-primary full-width">
+                                <span>Заказать услугу</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="carousel-controls">
+                    <button class="carousel-btn prev" id="carouselPrev">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="carousel-btn next" id="carouselNext">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            
+                <div class="carousel-dots" id="carouselDots">
+                <!-- Dots will be generated by JavaScript -->
+                </div>
+            </div>
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Готовы начать проект?</h2>
+                <p>Получите бесплатную консультацию и расчет стоимости вашего проекта</p>
+                <form class="cta-form" id="ctaForm">
+                    <div class="form-group">
+                        <input type="text" placeholder="Ваше имя" required>
+                        <input type="tel" placeholder="Телефон" required>
+                        <input type="email" placeholder="E-mail">
+                    </div>
+                    <button type="submit" class="btn-primary large">
+                        <span>Получить расчет</span>
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-drone"></i>
+                        <span>AeroScan</span>
+                    </div>
+                    <p>Профессиональные услуги БПЛА для бизнеса и промышленности</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-telegram"></i></a>
+                        <a href="#"><i class="fab fa-whatsapp"></i></a>
+                        <a href="#"><i class="fab fa-vk"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Услуги</h4>
+                    <a href="#">Аэрофотосъемка</a>
+                    <a href="#">Мониторинг объектов</a>
+                    <a href="#">Сельское хозяйство</a>
+                    <a href="#">Поисковые работы</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Компания</h4>
+                    <a href="#">О нас</a>
+                    <a href="#">Проекты</a>
+                    <a href="#">Отзывы</a>
+                    <a href="#">Блог</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Контакты</h4>
+                    <div class="contact-info">
+                        <p><i class="fas fa-phone"></i> +7 (999) 123-45-67</p>
+                        <p><i class="fas fa-envelope"></i> info@aeroscam.ru</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Москва, ул. Примерная, 123</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 AeroScan. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
