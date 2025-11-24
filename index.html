@@ -9,20 +9,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- Preloader -->
-    <!-- <div class="preloader" id="preloader"> --> (потом убрать комменты)
-        <!-- <div class="preloader-content"> -->
-            <!-- <div class="drone-loader"> -->
-                <!-- <div class="drone-body"> -->
-                    <!-- <div class="propeller left"></div> -->
-                    <!-- <div class="propeller right"></div> -->
-                <!-- </div> -->
-            <!-- </div> -->
-            <!-- <h1>AeroScan</h1> -->
-            <!-- <p>Запускаем ваш бизнес в новое измерение</p> -->
-        <!-- </div> -->
-    <!-- </div> -->
-
     <!-- Navigation -->
     <nav class="navbar" id="navbar">
         <div class="nav-container">
@@ -31,10 +17,9 @@
                 <span>AeroScan</span>
             </div>
             <div class="nav-menu" id="navMenu">
-                <a href="#services" class="nav-link">Услуги</a>
                 <a href="#technology" class="nav-link">Технологии</a>
-                <a href="#projects" class="nav-link">Проекты</a>
-                <a href="#pricing" class="nav-link">Стоимость</a>
+                <a href="#pricing" class="nav-link">Услуги</a>
+                <a href="#calculator" class="nav-link">Калькулятор</a>
                 <a href="#contact" class="nav-link">Контакты</a>
             </div>
             <div class="nav-actions">
@@ -66,31 +51,14 @@
                 <span class="title-line">для вашего бизнеса</span>
             </h1>
             <p class="hero-subtitle">Аэрофотосъемка, картография, мониторинг и аналитика с применением современных дронов</p>
-            <div class="hero-stats">
-                <div class="stat">
-                    <div class="stat-number" data-target="500">0</div>
-                    <div class="stat-label">выполненных проектов</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" data-target="15000">0</div>
-                    <div class="stat-label">часов налета</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-number" data-target="98">0</div>
-                    <div class="stat-label">% клиентов довольны</div>
-                </div>
-            </div>
+    
+
             <div class="hero-actions">
                 <button class="btn-primary large" id="heroCta">
                     <span>Рассчитать стоимость</span>
-                    <i class="fas fa-arrow-right"></i>
+                    <i class="fas fa-calculator"></i>
                 </button>
-                <button class="btn-play" id="watchVideo">
-                    <div class="play-icon">
-                        <i class="fas fa-play"></i>
-                    </div>
-                    <span>Смотреть видео</span>
-                </button>
+                
             </div>
         </div>
         <div class="scroll-indicator">
@@ -156,6 +124,7 @@
             </div>
         </div>
     </section>
+    
     <!-- Pricing Carousel Section -->
     <section class="pricing" id="pricing">
         <div class="container">
@@ -166,26 +135,31 @@
         
             <div class="pricing-carousel">
                 <div class="carousel-container" id="pricingCarousel">
-                <!-- Slide 1 -->
+                    <!-- Slide 1 -->
                     <div class="pricing-card">
                         <div class="card-image">
                             <img src="2.jpg" alt="Мониторинг строительных объектов">
                             <div class="card-badge">Популярно</div>
                         </div>
                         <div class="card-content">
-                            <h3>Мониторинг строительных объектов</h3>
+                            <h3>Мониторинг строительства</h3>
                             <p>Регулярный контроль прогресса строительства, объемов работ и соблюдения сроков</p>
                         
                             <div class="price-tiers">
                                 <div class="price-tier">
-                                    <span class="tier-name">Разовый заказ</span>
-                                    <span class="tier-price">4 900 - 14 900 ₽</span>
-                                    <span class="tier-note">за вылет</span>
+                                    <span class="tier-name">Базовый вылет</span>
+                                    <span class="tier-price">15 000 ₽</span>
+                                    <span class="tier-note">до 10 000 м²</span>
                                 </div>
                                 <div class="price-tier">
-                                    <span class="tier-name">Абонемент</span>
-                                    <span class="tier-price">24 900 - 74 900 ₽</span>
-                                    <span class="tier-note">до 8 вылетов</span>
+                                    <span class="tier-name">Расширенный</span>
+                                    <span class="tier-price">25 000 - 45 000 ₽</span>
+                                    <span class="tier-note">10 000 - 50 000 м²</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Комплексный</span>
+                                    <span class="tier-price">65 000 - 150 000 ₽</span>
+                                    <span class="tier-note">свыше 50 000 м²</span>
                                 </div>
                             </div>
                         
@@ -203,7 +177,7 @@
                         </div>
                     </div>
 
-                <!-- Slide 2 -->
+                    <!-- Slide 2 -->
                     <div class="pricing-card">
                         <div class="card-image">
                             <img src="3.jpg" alt="Топографическая съемка">
@@ -214,14 +188,19 @@
                         
                             <div class="price-tiers">
                                 <div class="price-tier">
-                                    <span class="tier-name">Разовый заказ</span>
-                                    <span class="tier-price">14 900 - 39 000 ₽</span>
-                                    <span class="tier-note">с облета</span>
+                                    <span class="tier-name">Базовый вылет</span>
+                                    <span class="tier-price">25 000 ₽</span>
+                                    <span class="tier-note">до 10 000 м²</span>
                                 </div>
                                 <div class="price-tier">
-                                    <span class="tier-name">Абонемент</span>
-                                    <span class="tier-price">79 000 - 190 000 ₽</span>
-                                    <span class="tier-note">до 8 вылетов</span>
+                                    <span class="tier-name">Расширенный</span>
+                                    <span class="tier-price">35 000 - 65 000 ₽</span>
+                                    <span class="tier-note">10 000 - 50 000 м²</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Комплексный</span>
+                                    <span class="tier-price">85 000 - 200 000 ₽</span>
+                                    <span class="tier-note">свыше 50 000 м²</span>
                                 </div>
                             </div>
                         
@@ -239,21 +218,31 @@
                         </div>
                     </div>
 
-                <!-- Slide 3 -->
+                    <!-- Slide 3 -->
                     <div class="pricing-card">
                         <div class="card-image">
                             <img src="4.jpg" alt="Высокоточное сканирование">
                             <div class="card-badge">Премиум</div>
                         </div>
                         <div class="card-content">
-                            <h3>Высокоточное сканирование</h3>
+                            <h3>Лазерное сканирование</h3>
                             <p>Лазерное сканирование для создания точных 3D моделей объектов и территорий</p>
                         
                             <div class="price-tiers">
                                 <div class="price-tier">
-                                    <span class="tier-name">Разовый заказ</span>
-                                    <span class="tier-price">29 000 - 99 000 ₽</span>
-                                    <span class="tier-note">индивидуально</span>
+                                    <span class="tier-name">Базовый вылет</span>
+                                    <span class="tier-price">45 000 ₽</span>
+                                    <span class="tier-note">до 5 000 м²</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Расширенный</span>
+                                    <span class="tier-price">65 000 - 120 000 ₽</span>
+                                    <span class="tier-note">5 000 - 25 000 м²</span>
+                                </div>
+                                <div class="price-tier">
+                                    <span class="tier-name">Комплексный</span>
+                                    <span class="tier-price">150 000 - 300 000 ₽</span>
+                                    <span class="tier-note">свыше 25 000 м²</span>
                                 </div>
                             </div>
                         
@@ -270,99 +259,195 @@
                             </button>
                         </div>
                     </div>
-
-                <!-- Slide 4 -->
-                    <div class="pricing-card">
-                        <div class="card-image">
-                            <img src="5.jpg" alt="Аэрофотомоделирование">
-                        </div>
-                        <div class="card-content">
-                            <h3>Аэрофотомоделирование</h3>
-                            <p>Создание детализированных 3D моделей по данным аэрофотосъемки</p>
-                        
-                            <div class="price-tiers">
-                                <div class="price-tier">
-                                    <span class="tier-name">Разовый заказ</span>
-                                    <span class="tier-price">19 000 - 59 000 ₽</span>
-                                    <span class="tier-note">под проект</span>
-                                </div>
-                                <div class="price-tier">
-                                    <span class="tier-name">Абонемент</span>
-                                    <span class="tier-price">99 000 - 290 000 ₽</span>
-                                    <span class="tier-note">до 8 вылетов</span>
-                                </div>
-                            </div>
-                        
-                            <ul class="service-features">
-                                <li>3D текстурированные модели</li>
-                                <li>VR/AR готовность</li>
-                                <li>Интерактивные туры</li>
-                                <li>Архитектурная визуализация</li>
-                            </ul>
-                        
-                            <button class="btn-primary full-width">
-                                <span>Заказать услугу</span>
-                                <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                <!-- Slide 5 -->
-                    <div class="pricing-card">
-                        <div class="card-image">
-                            <img src="6.jpg" alt="Контроль охраны труда">
-                        </div>
-                        <div class="card-content">
-                            <h3>Контроль охраны труда</h3>
-                            <p>Мониторинг соблюдения норм безопасности на строительных площадках</p>
-                        
-                            <div class="price-tiers">
-                                <div class="price-tier">
-                                    <span class="tier-name">Разовый заказ</span>
-                                    <span class="tier-price">7 900 - 19 000 ₽</span>
-                                    <span class="tier-note">за проверку</span>
-                                </div>
-                                <div class="price-tier">
-                                    <span class="tier-name">Абонемент</span>
-                                    <span class="tier-price">34 900 - 89 000 ₽</span>
-                                    <span class="tier-note">до 8 вылетов</span>
-                                </div>
-                            </div>
-                        
-                            <ul class="service-features">
-                                <li>Контроль СИЗ</li>
-                                <li>Безопасность работ</li>
-                                <li>Протокол нарушений</li>
-                                <li>Рекомендации</li>
-                            </ul>
-                        
-                            <button class="btn-primary full-width">
-                                <span>Заказать услугу</span>
-                                <i class="fas fa-arrow-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            
-                <div class="carousel-controls">
-                    <button class="carousel-btn prev" id="carouselPrev">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button class="carousel-btn next" id="carouselNext">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
                 </div>
             
                 <div class="carousel-dots" id="carouselDots">
-                <!-- Dots will be generated by JavaScript -->
+                    <!-- Dots will be generated by JavaScript -->
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Calculator Section -->
+    <section class="calculator-section" id="calculator">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Калькулятор стоимости</h2>
+                <p class="section-subtitle">Рассчитайте стоимость услуг в режиме реального времени</p>
+            </div>
+            
+            <div class="calculator-container">
+                <div class="calculator-controls">
+                    <div class="calc-step active" data-step="1">
+                        <h3>Выберите тип услуги</h3>
+                        <div class="service-options">
+                            <div class="service-option active" data-service="monitoring" data-price="15000">
+                                <div class="option-icon">
+                                    <i class="fas fa-hard-hat"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h4>Мониторинг строительства</h4>
+                                    <p>Регулярный контроль прогресса строительства</p>
+                                    <div class="option-price">от 15 000 ₽</div>
+                                </div>
+                            </div>
+                            <div class="service-option" data-service="topographic" data-price="25000">
+                                <div class="option-icon">
+                                    <i class="fas fa-map"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h4>Топографическая съемка</h4>
+                                    <p>Высокоточная съемка местности</p>
+                                    <div class="option-price">от 25 000 ₽</div>
+                                </div>
+                            </div>
+                            <div class="service-option" data-service="scanning" data-price="45000">
+                                <div class="option-icon">
+                                    <i class="fas fa-ruler-combined"></i>
+                                </div>
+                                <div class="option-content">
+                                    <h4>Лазерное сканирование</h4>
+                                    <p>Точные 3D модели объектов</p>
+                                    <div class="option-price">от 45 000 ₽</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calc-step active" data-step="2">
+                        <h3>Параметры проекта</h3>
+                        
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Площадь территории</span>
+                                <span class="param-value" id="areaValue">10 000 м²</span>
+                            </label>
+                            <input type="range" id="areaSize" min="1000" max="200000" value="10000" step="1000" class="param-slider">
+                            <div class="param-hint">От 1 000 до 200 000 м²</div>
+                        </div>
+                        
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Высота полета</span>
+                                <span class="param-value" id="heightValue">120 м</span>
+                            </label>
+                            <input type="range" id="flightHeight" min="50" max="500" value="120" class="param-slider">
+                            <div class="param-hint">От 50 до 500 метров</div>
+                        </div>
+                        
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Стадия проекта</span>
+                            </label>
+                            <select id="projectStage" class="param-select">
+                                <option value="1.0">Начальная (планирование)</option>
+                                <option value="1.2">Активная (строительство)</option>
+                                <option value="1.5">Финальная (завершение)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Частота съемки</span>
+                                <span class="param-value" id="frequencyValue">1 раз</span>
+                            </label>
+                            <input type="range" id="shootingFrequency" min="1" max="12" value="1" class="param-slider">
+                            <div class="param-hint">От 1 до 12 раз в месяц</div>
+                        </div>
+
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Тип местности</span>
+                            </label>
+                            <select id="terrainType" class="param-select">
+                                <option value="1.0">Равнинная</option>
+                                <option value="1.3">Холмистая</option>
+                                <option value="1.7">Горная</option>
+                            </select>
+                        </div>
+
+                        <div class="param-group">
+                            <label class="param-label">
+                                <span>Срочность выполнения</span>
+                            </label>
+                            <select id="urgency" class="param-select">
+                                <option value="1.0">Стандартная (5-7 дней)</option>
+                                <option value="1.3">Экспресс (2-3 дня)</option>
+                                <option value="1.8">Срочная (24 часа)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="calculator-result">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <h3>Расчет стоимости</h3>
+                            <div class="result-service" id="resultService">Мониторинг строительства</div>
+                        </div>
+                        
+                        <div class="cost-breakdown">
+                            <div class="cost-item">
+                                <span>Базовая стоимость</span>
+                                <span id="baseCost">15 000 ₽</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Надбавка за площадь</span>
+                                <span id="areaCost">0 ₽</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Сложность местности</span>
+                                <span id="terrainCost">0 ₽</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Стадия проекта</span>
+                                <span id="stageCost">0 ₽</span>
+                            </div>
+                            <div class="cost-item">
+                                <span>Срочность</span>
+                                <span id="urgencyCost">0 ₽</span>
+                            </div>
+                            <div class="cost-divider"></div>
+                            <div class="cost-total">
+                                <span>Стоимость за вылет</span>
+                                <span id="totalPerFlight">15 000 ₽</span>
+                            </div>
+                            <div class="cost-total final">
+                                <span>Общая стоимость</span>
+                                <span id="totalCost">15 000 ₽</span>
+                            </div>
+                        </div>
+                        
+                        <div class="result-features">
+                            <h4>Что включено:</h4>
+                            <ul>
+                                <li>Полет дрона с профессиональной камерой</li>
+                                <li>Обработка данных и формирование отчета</li>
+                                <li>Консультация специалиста</li>
+                                <li>Техническая поддержка</li>
+                            </ul>
+                        </div>
+                        
+                        <button class="btn-primary full-width large" id="orderBtn">
+                            <span>Заказать услугу</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        
+                        <div class="result-note">
+                            <p>* Точная стоимость рассчитывается после консультации с менеджером</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- CTA Section -->
-    <section class="cta-section">
+    <section class="cta-section" id="contact">
         <div class="container">
             <div class="cta-content">
                 <h2>Готовы начать проект?</h2>
-                <p>Получите бесплатную консультацию и расчет стоимости вашего проекта</p>
+                <p>Получите бесплатную консультацию и точный расчет стоимости вашего проекта</p>
                 <form class="cta-form" id="ctaForm">
                     <div class="form-group">
                         <input type="text" placeholder="Ваше имя" required>
@@ -399,8 +484,6 @@
                     <h4>Услуги</h4>
                     <a href="#">Аэрофотосъемка</a>
                     <a href="#">Мониторинг объектов</a>
-                    <a href="#">Сельское хозяйство</a>
-                    <a href="#">Поисковые работы</a>
                 </div>
                 <div class="footer-section">
                     <h4>Компания</h4>
