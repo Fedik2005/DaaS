@@ -1,27 +1,27 @@
 // assets/js/booking.js
 console.log("Booking.js loaded!");
 
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
 // ===== СИСТЕМА ВКЛАДОК =====
 function openTab(tabName) {
-    // Скрыть все вкладки
     const tabContents = document.getElementsByClassName('tab-content');
     for (let i = 0; i < tabContents.length; i++) {
         tabContents[i].classList.remove('active');
     }
 
-    // Убрать активность у всех кнопок
     const tabButtons = document.getElementsByClassName('tab-button');
     for (let i = 0; i < tabButtons.length; i++) {
         tabButtons[i].classList.remove('active');
     }
 
-    // Показать выбранную вкладку
     document.getElementById(tabName).classList.add('active');
     event.currentTarget.classList.add('active');
 
-    // Загрузить данные для вкладки
     if (tabName === 'calendar') {
-        loadCalendarData();
+        loadCalendar();
+        loadCalendarStats();
     } else if (tabName === 'catalog') {
         loadDevices();
     }
@@ -29,14 +29,10 @@ function openTab(tabName) {
 
 // ===== КАТАЛОГ УСТРОЙСТВ =====
 function loadDevices() {
-    console.log("Loading devices from Firebase...");
-    
     const db = firebase.firestore();
     
     db.collection("devices").get().then((querySnapshot) => {
         const devicesContainer = document.getElementById('devicesContainer');
-        console.log("Found devices:", querySnapshot.size);
-        
         devicesContainer.innerHTML = '';
         
         if (querySnapshot.empty) {
@@ -46,14 +42,12 @@ function loadDevices() {
         
         querySnapshot.forEach((doc) => {
             const device = doc.data();
-            console.log("Device:", device);
-            
             const deviceCard = `
                 <div class="device-card">
-                    <img src="${device.image}" alt="${device.name}">
+                    <img src="${device.image}" alt="${device.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
                     <h3>${device.name}</h3>
                     <p>${device.description}</p>
-                    <p class="price">${device.price} ₽/день</p>
+                    <p class="price" style="font-size: 1.5em; font-weight: bold; color: #007bff;">${device.price} ₽/день</p>
                     <button onclick="bookDevice('${doc.id}')">Забронировать</button>
                 </div>
             `;
@@ -70,12 +64,11 @@ function bookDevice(deviceId) {
     
     db.collection("devices").doc(deviceId).get().then((doc) => {
         const device = doc.data();
-        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", "2024-01-15");
+        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
         const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "14:00");
         const address = prompt("Адрес доставки/использования:", "Москва, ул. Примерная, 123");
         
         if (bookingDate && bookingTime && address) {
-            // Сохраняем бронирование в Firebase
             db.collection("bookings").add({
                 deviceId: deviceId,
                 deviceName: device.name,
@@ -86,37 +79,132 @@ function bookDevice(deviceId) {
                 status: "active",
                 createdAt: new Date()
             }).then(() => {
-                alert(`Устройство "${device.name}" забронировано на ${bookingDate} в ${bookingTime}`);
-                loadCalendarData(); // Обновляем календарь
+                alert(`✅ Устройство "${device.name}" забронировано на ${bookingDate} в ${bookingTime}`);
+                if (document.getElementById('calendar').classList.contains('active')) {
+                    loadCalendar();
+                    loadCalendarStats();
+                }
             });
         }
     });
 }
 
-// ===== СИСТЕМА КАЛЕНДАРЯ И ОТЧЕТНОСТИ =====
-function loadCalendarData() {
-    loadDayDetails();
-    loadCalendarStats();
-    loadDeviceFilter();
+// ===== КАЛЕНДАРЬ =====
+function loadCalendar() {
+    const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
+    const calendarElement = document.getElementById('monthCalendar');
+    
+    calendarElement.innerHTML = `
+        <div class="calendar-header">
+            <h2>${monthNames[currentMonth]} ${currentYear}</h2>
+            <div class="calendar-nav">
+                <button onclick="changeMonth(-1)">← Пред</button>
+                <button onclick="changeMonth(1)">След →</button>
+            </div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+            <!-- Дни недели -->
+            <div class="calendar-day-header">Пн</div>
+            <div class="calendar-day-header">Вт</div>
+            <div class="calendar-day-header">Ср</div>
+            <div class="calendar-day-header">Чт</div>
+            <div class="calendar-day-header">Пт</div>
+            <div class="calendar-day-header">Сб</div>
+            <div class="calendar-day-header">Вс</div>
+        </div>
+    `;
+    
+    generateCalendarDays();
+    loadBookingsForCalendar();
 }
 
-function loadDayDetails() {
-    const dateFilter = document.getElementById('dateFilter').value || new Date().toISOString().split('T')[0];
-    const deviceFilter = document.getElementById('deviceCalendarFilter').value;
+function generateCalendarDays() {
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const daysInMonth = lastDay.getDate();
+    const startingDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
     
-    const db = firebase.firestore();
-    let query = db.collection("bookings").where("date", "==", dateFilter);
+    const calendarGrid = document.getElementById('calendarGrid');
     
-    if (deviceFilter) {
-        query = query.where("deviceId", "==", deviceFilter);
+    // Пустые ячейки перед первым днем
+    for (let i = 0; i < startingDay; i++) {
+        calendarGrid.innerHTML += `<div class="calendar-day empty"></div>`;
     }
     
-    query.get().then((querySnapshot) => {
+    // Дни месяца
+    const today = new Date();
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const isToday = today.getDate() === day && today.getMonth() === currentMonth && today.getFullYear() === currentYear;
+        
+        calendarGrid.innerHTML += `
+            <div class="calendar-day ${isToday ? 'today' : ''}" onclick="showDayDetails('${dateStr}')">
+                <div class="day-number">${day}</div>
+                <div class="booking-badge" id="badge-${dateStr}" style="display: none;">0</div>
+            </div>
+        `;
+    }
+}
+
+function changeMonth(direction) {
+    currentMonth += direction;
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+    } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+    }
+    loadCalendar();
+    loadCalendarStats();
+}
+
+function loadBookingsForCalendar() {
+    const db = firebase.firestore();
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    
+    db.collection("bookings")
+        .where("date", ">=", firstDay.toISOString().split('T')[0])
+        .where("date", "<=", lastDay.toISOString().split('T')[0])
+        .get().then((querySnapshot) => {
+            
+        const bookingsByDate = {};
+        querySnapshot.forEach((doc) => {
+            const booking = doc.data();
+            if (!bookingsByDate[booking.date]) {
+                bookingsByDate[booking.date] = 0;
+            }
+            bookingsByDate[booking.date]++;
+        });
+        
+        // Обновляем бейджики
+        for (const [date, count] of Object.entries(bookingsByDate)) {
+            const badge = document.getElementById(`badge-${date}`);
+            if (badge) {
+                badge.style.display = 'block';
+                badge.textContent = count;
+                
+                // Добавляем класс дням с бронированиями
+                const dayElement = badge.parentElement;
+                dayElement.classList.add('has-bookings');
+            }
+        }
+    });
+}
+
+function showDayDetails(date) {
+    const db = firebase.firestore();
+    
+    db.collection("bookings").where("date", "==", date).get().then((querySnapshot) => {
         const dayDetails = document.getElementById('dayDetails');
-        dayDetails.innerHTML = '<h3>Бронирования на ' + dateFilter + '</h3>';
+        const dateObj = new Date(date);
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        
+        dayDetails.innerHTML = `<h3>📅 Бронирования на ${dateObj.toLocaleDateString('ru-RU', options)}</h3>`;
         
         if (querySnapshot.empty) {
-            dayDetails.innerHTML += '<p>Нет бронирований на эту дату</p>';
+            dayDetails.innerHTML += '<p>На этот день бронирований нет</p>';
             return;
         }
         
@@ -152,7 +240,7 @@ function loadCalendarStats() {
         document.getElementById('todayRevenue').textContent = totalRevenue + ' ₽';
     });
     
-    // Занятые устройства
+    // Занятые устройства сегодня
     db.collection("bookings").where("date", "==", today).get().then((querySnapshot) => {
         const busyDeviceIds = new Set();
         querySnapshot.forEach((doc) => {
@@ -162,61 +250,16 @@ function loadCalendarStats() {
     });
 }
 
-function loadDeviceFilter() {
-    const db = firebase.firestore();
-    const deviceFilter = document.getElementById('deviceCalendarFilter');
-    
-    db.collection("devices").get().then((querySnapshot) => {
-        deviceFilter.innerHTML = '<option value="">Все устройства</option>';
-        querySnapshot.forEach((doc) => {
-            const device = doc.data();
-            deviceFilter.innerHTML += `<option value="${doc.id}">${device.name}</option>`;
-        });
-    });
-}
-
-// ===== СИСТЕМА ТЕХПОДДЕРЖКИ =====
+// ===== ТЕХПОДДЕРЖКА =====
 function callSupport() {
-    alert("Звонок на номер: +7 (999) 123-45-67");
-}
-
-function startChat() {
-    alert("Чат с менеджером открывается...");
+    alert("📞 Звонок на номер: +7 (999) 123-45-67");
 }
 
 function sendEmail() {
-    window.location.href = "mailto:support@daas.ru";
-}
-
-function showHelp(problemType) {
-    const supportForm = document.getElementById('supportForm');
-    const problems = {
-        'booking': 'Проблема с бронированием',
-        'device': 'Не работает устройство', 
-        'payment': 'Ошибка оплаты',
-        'other': 'Другая проблема'
-    };
-    
-    supportForm.innerHTML = `
-        <h4>Опишите проблему: ${problems[problemType]}</h4>
-        <textarea id="problemDescription" placeholder="Подробно опишите проблему..." rows="4"></textarea>
-        <button onclick="submitSupportRequest('${problemType}')">Отправить запрос</button>
-    `;
-}
-
-function submitSupportRequest(problemType) {
-    const description = document.getElementById('problemDescription').value;
-    if (description) {
-        alert("Запрос в поддержку отправлен! Мы свяжемся с вами в течение 15 минут.");
-        document.getElementById('supportForm').innerHTML = '';
-    } else {
-        alert("Пожалуйста, опишите проблему");
-    }
+    window.location.href = "mailto:support@daas.ru?subject=Поддержка DaaS&body=Здравствуйте! У меня вопрос по поводу...";
 }
 
 // Загружаем устройства при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     loadDevices();
-    // Устанавливаем сегодняшнюю дату в фильтр
-    document.getElementById('dateFilter').value = new Date().toISOString().split('T')[0];
 });
