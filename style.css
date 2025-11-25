@@ -1934,7 +1934,6 @@ html, body {
     .btn-secondary,
     .nav-link,
     .service-option,
-    .carousel-dot,
     .param-select {
         min-height: 44px;
         display: flex;
