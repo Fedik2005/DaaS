@@ -2,41 +2,125 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Бронирование - DaaS</title>
-    <link rel="stylesheet" href="../assets/css/booking.css">
+    <title>DaaS - Система бронирования</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
     <header>
-        <h1>Каталог устройств</h1>
+        <h1>DaaS - Дисплей как услуга</h1>
         <nav>
             <a href="../index.html">Главная</a>
-            <a href="catalog.html">Каталог</a>
+            <a href="index.html">Бронирование</a>
         </nav>
     </header>
     
     <main>
-        <div class="filters">
-            <select id="typeFilter">
-                <option value="">Все типы</option>
-                <option value="monitor">Мониторы</option>
-                <option value="projector">Проекторы</option>
-            </select>
-            <input type="text" id="search" placeholder="Поиск устройств...">
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="openTab('catalog')">Каталог устройств</button>
+            <button class="tab-button" onclick="openTab('calendar')">Календарь бронирований</button>
+            <button class="tab-button" onclick="openTab('support')">Техподдержка</button>
         </div>
-        
-        <!-- ЗАМЕНИЛ devicesList на devicesContainer -->
-        <div class="devices-grid" id="devicesContainer">
-            <!-- Сюда загрузятся устройства из Firebase -->
+
+        <!-- ВКЛАДКА КАТАЛОГА -->
+        <div id="catalog" class="tab-content active">
+            <div class="filters">
+                <select id="typeFilter">
+                    <option value="">Все типы</option>
+                    <option value="monitor">Мониторы</option>
+                    <option value="projector">Проекторы</option>
+                    <option value="drone">Дроны</option>
+                </select>
+                <input type="text" id="search" placeholder="Поиск устройств...">
+            </div>
+            
+            <div class="devices-grid" id="devicesContainer">
+                <!-- Сюда загрузятся устройства из Firebase -->
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА КАЛЕНДАРЯ -->
+        <div id="calendar" class="tab-content">
+            <div class="calendar-filters">
+                <input type="date" id="dateFilter" onchange="loadDayDetails()">
+                <select id="deviceCalendarFilter" onchange="loadDayDetails()">
+                    <option value="">Все устройства</option>
+                </select>
+            </div>
+            
+            <div class="calendar-stats">
+                <div class="stat-card">
+                    <h3>Бронирований сегодня</h3>
+                    <p id="todayBookings">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Доход сегодня</h3>
+                    <p id="todayRevenue">0 ₽</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Занято устройств</h3>
+                    <p id="busyDevices">0</p>
+                </div>
+            </div>
+
+            <div class="day-details" id="dayDetails">
+                <!-- Детали выбранного дня -->
+            </div>
+
+            <div class="month-calendar" id="monthCalendar">
+                <!-- Мини-календарь на месяц -->
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА ТЕХПОДДЕРЖКИ -->
+        <div id="support" class="tab-content">
+            <div class="support-container">
+                <div class="support-info">
+                    <h3>Центр поддержки операторов</h3>
+                    <p>Если возникли проблемы с бронированием или оборудованием</p>
+                </div>
+                
+                <div class="contact-methods">
+                    <div class="contact-card">
+                        <h4>📞 Экстренная связь</h4>
+                        <p>Телефон: +7 (999) 123-45-67</p>
+                        <button onclick="callSupport()">Позвонить</button>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <h4>💬 Чат с менеджером</h4>
+                        <p>Онлайн-консультация</p>
+                        <button onclick="startChat()">Начать чат</button>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <h4>📧 Email поддержка</h4>
+                        <p>support@daas.ru</p>
+                        <button onclick="sendEmail()">Написать</button>
+                    </div>
+                </div>
+
+                <div class="quick-help">
+                    <h4>⚡ Быстрая помощь</h4>
+                    <div class="help-buttons">
+                        <button onclick="showHelp('booking')">Проблема с бронированием</button>
+                        <button onclick="showHelp('device')">Не работает устройство</button>
+                        <button onclick="showHelp('payment')">Ошибка оплаты</button>
+                        <button onclick="showHelp('other')">Другая проблема</button>
+                    </div>
+                </div>
+
+                <div class="support-form" id="supportForm">
+                    <!-- Форма обратной связи -->
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-
-<!-- Твоя конфигурация Firebase -->
     <script src="../assets/js/firebase-config.js"></script>
     <script src="../assets/js/booking.js"></script>
-    </body>
+</body>
 </html>
