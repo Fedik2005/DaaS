@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Бронирование - DaaS</title>
-    <link rel="stylesheet" href="../assets/css/booking.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <header>
@@ -24,21 +24,19 @@
             <input type="text" id="search" placeholder="Поиск устройств...">
         </div>
         
-        <div id="devicesList" class="devices-grid">
-            <!-- Сюда будем загружать устройства -->
+        <!-- ЗАМЕНИЛ devicesList на devicesContainer -->
+        <div class="devices-grid" id="devicesContainer">
+            <!-- Сюда загрузятся устройства из Firebase -->
         </div>
     </main>
 
-    <script src="../assets/js/booking.js"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 
-<!-- Твоя конфигурация Firebase -->
-    <script src="js/firebase-config.js"></script>
-
-<!-- Твой существующий скрипт -->
-    <script src="js/script.js"></script>
+    <!-- ОБНОВИЛ пути к скриптам -->
+    <script src="../js/firebase-config.js"></script>
+    <script src="../js/booking.js"></script>
 </body>
 </html>
