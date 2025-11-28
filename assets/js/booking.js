@@ -31,55 +31,95 @@ function openTab(tabName) {
 function loadDevices() {
     const db = firebase.firestore();
     
-    db.collection("devices").get().then((querySnapshot) => {
+    db.collection("drones").get().then((querySnapshot) => {
         const devicesContainer = document.getElementById('devicesContainer');
         devicesContainer.innerHTML = '';
         
         if (querySnapshot.empty) {
-            devicesContainer.innerHTML = '<p>Устройства не найдены</p>';
+            devicesContainer.innerHTML = '<p>Дроны не найдены</p>';
             return;
         }
         
         querySnapshot.forEach((doc) => {
             const device = doc.data();
+            
+            // Создаем красивую карточку с features
             const deviceCard = `
                 <div class="device-card">
                     <img src="${device.image}" alt="${device.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
                     <h3>${device.name}</h3>
                     <p>${device.description}</p>
-                    <p class="price" style="font-size: 1.5em; font-weight: bold; color: #007bff;">${device.price} ₽/день</p>
-                    <button onclick="bookDevice('${doc.id}')">Забронировать</button>
+                    
+                    <!-- Показываем features как список преимуществ -->
+                    <div class="device-features">
+                        ${formatFeatures(device.features)}
+                    </div>
+                    
+                    <p class="price" style="font-size: 1.5em; font-weight: bold; color: #007bff;">
+                        ${device.price || 'Цена по запросу'}
+                    </p>
+                    
+                    <button onclick="bookDevice('${doc.id}')">
+                        ${device.isAvailable ? 'Забронировать' : 'Недоступно'}
+                    </button>
                 </div>
             `;
             devicesContainer.innerHTML += deviceCard;
         });
     }).catch((error) => {
-        console.error("Error loading devices:", error);
-        document.getElementById('devicesContainer').innerHTML = '<p>Ошибка загрузки устройств</p>';
+        console.error("Error loading drones:", error);
+        document.getElementById('devicesContainer').innerHTML = '<p>Ошибка загрузки дронов</p>';
     });
+}
+
+// Функция для красивого форматирования features
+function formatFeatures(featuresText) {
+    if (!featuresText) return '';
+    
+    // Разделяем features по символу + и создаем список
+    const featuresArray = featuresText.split('+').filter(f => f.trim() !== '');
+    
+    if (featuresArray.length === 0) return '';
+    
+    let featuresHTML = '<div class="features-list">';
+    featuresArray.forEach(feature => {
+        featuresHTML += `<div class="feature-item">✅ ${feature.trim()}</div>`;
+    });
+    featuresHTML += '</div>';
+    
+    return featuresHTML;
 }
 
 function bookDevice(deviceId) {
     const db = firebase.firestore();
     
-    db.collection("devices").doc(deviceId).get().then((doc) => {
+    db.collection("drones").doc(deviceId).get().then((doc) => {
         const device = doc.data();
-        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
-        const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "14:00");
-        const address = prompt("Адрес доставки/использования:", "Москва, ул. Примерная, 123");
         
-        if (bookingDate && bookingTime && address) {
+        if (!device.isAvailable) {
+            alert('❌ Этот дрон временно недоступен для бронирования');
+            return;
+        }
+        
+        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
+        const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "10:00");
+        const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
+        const projectType = prompt("Тип проекта:", "Топографическая съёмка");
+        
+        if (bookingDate && bookingTime && address && projectType) {
             db.collection("bookings").add({
                 deviceId: deviceId,
                 deviceName: device.name,
                 date: bookingDate,
                 time: bookingTime,
                 address: address,
-                price: device.price,
+                projectType: projectType,
+                price: device.price || 0,
                 status: "active",
                 createdAt: new Date()
             }).then(() => {
-                alert(`✅ Устройство "${device.name}" забронировано на ${bookingDate} в ${bookingTime}`);
+                alert(`✅ Дрон "${device.name}" забронирован!\n📅 Дата: ${bookingDate}\n⏰ Время: ${bookingTime}\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
+                
                 if (document.getElementById('calendar').classList.contains('active')) {
                     loadCalendar();
                     loadCalendarStats();
@@ -88,7 +128,6 @@ function bookDevice(deviceId) {
         }
     });
 }
-
 // ===== КАЛЕНДАРЬ =====
 function loadCalendar() {
     const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
