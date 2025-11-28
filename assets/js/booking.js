@@ -90,26 +90,70 @@ function bookDevice(deviceId) {
         const projectType = prompt("Тип проекта:", "Топографическая съёмка");
         
         if (bookingDate && bookingTime && address && projectType) {
-            db.collection("bookings").add({
-                deviceId: deviceId,
-                deviceName: device.name,
-                date: bookingDate,
-                time: bookingTime,
-                address: address,
-                projectType: projectType,
-                price: device.price || 0,
-                status: "active",
-                createdAt: new Date()
-            }).then(() => {
-                alert(`✅ Дрон "${device.name}" забронирован!\n📅 Дата: ${bookingDate}\n⏰ Время: ${bookingTime}\n📍 Объект: ${address}\n Проект: ${projectType}`);
-                
-                if (document.getElementById('calendar').classList.contains('active')) {
-                    loadCalendar();
-                    loadCalendarStats();
-                }
-            });
+            // ПРОВЕРЯЕМ НАЛИЧИЕ КОНФЛИКТУЮЩИХ БРОНИРОВАНИЙ
+            checkBookingConflict(deviceId, bookingDate, bookingTime)
+                .then((hasConflict) => {
+                    if (hasConflict) {
+                        alert('❌ Этот дрон уже забронирован на выбранные дату и время! Выберите другое время.');
+                    } else {
+                        // СОЗДАЕМ БРОНИРОВАНИЕ
+                        createBooking(deviceId, device.name, bookingDate, bookingTime, address, projectType, device.price);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Ошибка при проверке бронирования:", error);
+                    alert('❌ Произошла ошибка при проверке доступности дрона');
+                });
         }
     });
+}
+
+// Функция проверки конфликтов бронирований
+function checkBookingConflict(deviceId, date, time) {
+    const db = firebase.firestore();
+    
+    return db.collection("bookings")
+        .where("deviceId", "==", deviceId)
+        .where("date", "==", date)
+        .where("time", "==", time)
+        .where("status", "in", ["active", "confirmed"]) // Проверяем только активные брони
+        .get()
+        .then((querySnapshot) => {
+            return !querySnapshot.empty; // true если есть конфликт, false если свободен
+        });
+}
+
+// Функция создания бронирования
+function createBooking(deviceId, deviceName, date, time, address, projectType, price) {
+    const db = firebase.firestore();
+    
+    db.collection("bookings").add({
+        deviceId: deviceId,
+        deviceName: deviceName,
+        date: date,
+        time: time,
+        address: address,
+        projectType: projectType,
+        price: price || 0,
+        status: "active",
+        createdAt: new Date(),
+        bookingId: generateBookingId() // Уникальный ID брони
+    }).then(() => {
+        alert(`✅ Дрон "${deviceName}" забронирован!\n📅 Дата: ${date}\n⏰ Время: ${time}\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
+        
+        if (document.getElementById('calendar').classList.contains('active')) {
+            loadCalendar();
+            loadCalendarStats();
+        }
+    }).catch((error) => {
+        console.error("Ошибка при создании бронирования:", error);
+        alert('❌ Произошла ошибка при бронировании дрона');
+    });
+}
+
+// Генерация уникального ID брони
+function generateBookingId() {
+    return 'BK' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
 }
 
 // Функция для красивого форматирования features
