@@ -433,6 +433,23 @@
         </div>
     </section>
 
+    <script>
+    document.getElementById('ctaForm').addEventListener('submit', function(e) {
+        e.preventDefault(); // Останавливаем обычную отправку формы
+    
+        // Получаем данные из формы
+        const name = this.querySelector('input[type="text"]').value;
+        const phone = this.querySelector('input[type="tel"]').value;
+        const email = this.querySelector('input[type="email"]').value;
+    
+    // Создаем сообщение с данными для бота
+        const message = `Новая заявка с сайта:%0A👤 Имя: ${name}%0A📞 Телефон: ${phone}%0A📧 Email: ${email}`;
+    
+    // Перенаправляем в Telegram бота с предзаполненным сообщением
+        window.location.href = `https://t.me/DaaS63_bot?start=${message}`;
+    });
+    </script>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
@@ -460,7 +477,6 @@
                     <a href="#">О нас</a>
                     <a href="#">Проекты</a>
                     <a href="#">Отзывы</a>
-                    <a href="#">Блог</a>
                 </div>
                 <div class="footer-section">
                     <h4>Контакты</h4>
