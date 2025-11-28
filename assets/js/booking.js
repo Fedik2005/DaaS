@@ -100,23 +100,18 @@ function bookDevice(deviceId) {
         
         const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
         const bookingTime = prompt("Введите время начала (ЧЧ:ММ):", "10:00");
-        const duration = prompt("Продолжительность съёмки (часы):", "4");
         const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
         const projectType = prompt("Тип проекта:", "Топографическая съёмка");
         
-        if (bookingDate && bookingTime && duration && address && projectType) {
-            const durationHours = parseInt(duration);
-            
-            if (durationHours < 1) {
-                alert('❌ Продолжительность должна быть не менее 1 часа');
-                return;
-            }
+        if (bookingDate && bookingTime && address && projectType) {
+            // ДЛЯ ДРОНОВ СТАНДАРТНАЯ ПРОДОЛЖИТЕЛЬНОСТЬ 4 ЧАСА
+            const durationHours = 4;
             
             // ПРОВЕРЯЕМ НАЛИЧИЕ КОНФЛИКТУЮЩИХ БРОНИРОВАНИЙ
             checkBookingConflict(deviceId, bookingDate, bookingTime, durationHours)
                 .then((hasConflict) => {
                     if (hasConflict) {
-                        alert('❌ Дрон занят в выбранное время! Выберите другое время или дату.');
+                        alert('❌ Дрон занят в выбранное время! Съёмка дрона занимает 4 часа. Выберите другое время или дату.');
                     } else {
                         // СОЗДАЕМ БРОНИРОВАНИЕ
                         createBooking(deviceId, device.name, bookingDate, bookingTime, durationHours, address, projectType, device.price || 0);
@@ -130,7 +125,7 @@ function bookDevice(deviceId) {
     });
 }
 
-// Функция проверки конфликтов бронирований С УЧЕТОМ ПРОДОЛЖИТЕЛЬНОСТИ
+// Функция проверки конфликтов бронирований С ФИКСИРОВАННОЙ ПРОДОЛЖИТЕЛЬНОСТЬЮ
 function checkBookingConflict(deviceId, date, startTime, durationHours) {
     const db = firebase.firestore();
     
@@ -151,23 +146,36 @@ function checkBookingConflict(deviceId, date, startTime, durationHours) {
             
             querySnapshot.forEach((doc) => {
                 const existingBooking = doc.data();
+                
+                // ДЛЯ ВСЕХ БРОНЕЙ ИСПОЛЬЗУЕМ ФИКСИРОВАННУЮ ПРОДОЛЖИТЕЛЬНОСТЬ 4 ЧАСА
+                const existingDuration = 4;
                 const existingStart = timeToMinutes(existingBooking.time);
-                const existingDuration = existingBooking.duration || 4; // По умолчанию 4 часа, если не указано
                 const existingEnd = existingStart + (existingDuration * 60);
                 
                 console.log("Существующая бронь:", {
                     time: existingBooking.time,
-                    duration: existingDuration,
                     start: existingStart,
-                    end: existingEnd
+                    end: existingEnd,
+                    duration: existingDuration
                 });
                 
-                // Проверяем пересечение интервалов
-                if ((newBookingStart >= existingStart && newBookingStart < existingEnd) ||
+                console.log("Новая бронь:", {
+                    time: startTime,
+                    start: newBookingStart,
+                    end: newBookingEnd,
+                    duration: durationHours
+                });
+                
+                // ПРОВЕРЯЕМ ПЕРЕСЕЧЕНИЕ ИНТЕРВАЛОВ
+                const timeConflict = (
+                    (newBookingStart >= existingStart && newBookingStart < existingEnd) ||
                     (newBookingEnd > existingStart && newBookingEnd <= existingEnd) ||
-                    (newBookingStart <= existingStart && newBookingEnd >= existingEnd)) {
+                    (newBookingStart <= existingStart && newBookingEnd >= existingEnd)
+                );
+                
+                if (timeConflict) {
                     hasConflict = true;
-                    console.log("❌ КОНФЛИКТ обнаружен!");
+                    console.log("❌ КОНФЛИКТ обнаружен! Интервалы пересекаются");
                 }
             });
             
@@ -193,7 +201,7 @@ function createBooking(deviceId, deviceName, date, time, duration, address, proj
         projectType: projectType,
         price: price,
         createdAt: new Date(),
-        bookingId: generateBookingId() // Уникальный ID брони
+        bookingId: generateBookingId()
     }).then(() => {
         alert(`✅ Дрон "${deviceName}" забронирован!\n📅 Дата: ${date}\n⏰ Время: ${time}-${endTime} (${duration} часов)\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
         
@@ -334,12 +342,14 @@ function showDayDetails(date) {
         let bookingsHTML = '<div class="bookings-list">';
         querySnapshot.forEach((doc) => {
             const booking = doc.data();
-            const endTime = booking.endTime || minutesToTime(timeToMinutes(booking.time) + ((booking.duration || 4) * 60));
+            // ДЛЯ ВСЕХ БРОНЕЙ ИСПОЛЬЗУЕМ ФИКСИРОВАННУЮ ПРОДОЛЖИТЕЛЬНОСТЬ 4 ЧАСА
+            const duration = 4;
+            const endTime = minutesToTime(timeToMinutes(booking.time) + (duration * 60));
             
             bookingsHTML += `
                 <div class="booking-item">
                     <strong>${booking.deviceName}</strong><br>
-                    <span>⏰ ${booking.time} - ${endTime} (${booking.duration || 4}ч)</span><br>
+                    <span>⏰ ${booking.time} - ${endTime} (${duration}ч)</span><br>
                     <span>📍 ${booking.address}</span><br>
                     <span>🎯 ${booking.projectType || 'Не указан'}</span>
                 </div>
