@@ -73,6 +73,19 @@ function loadDevices() {
     });
 }
 
+// Функция преобразования времени в минуты
+function timeToMinutes(timeStr) {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    return hours * 60 + minutes;
+}
+
+// Функция преобразования минут в время
+function minutesToTime(totalMinutes) {
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+}
+
 // ОСНОВНАЯ ФУНКЦИЯ БРОНИРОВАНИЯ
 function bookDevice(deviceId) {
     const db = firebase.firestore();
@@ -86,19 +99,27 @@ function bookDevice(deviceId) {
         }
         
         const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
-        const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "10:00");
+        const bookingTime = prompt("Введите время начала (ЧЧ:ММ):", "10:00");
+        const duration = prompt("Продолжительность съёмки (часы):", "4");
         const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
         const projectType = prompt("Тип проекта:", "Топографическая съёмка");
         
-        if (bookingDate && bookingTime && address && projectType) {
+        if (bookingDate && bookingTime && duration && address && projectType) {
+            const durationHours = parseInt(duration);
+            
+            if (durationHours < 1) {
+                alert('❌ Продолжительность должна быть не менее 1 часа');
+                return;
+            }
+            
             // ПРОВЕРЯЕМ НАЛИЧИЕ КОНФЛИКТУЮЩИХ БРОНИРОВАНИЙ
-            checkBookingConflict(deviceId, bookingDate, bookingTime)
+            checkBookingConflict(deviceId, bookingDate, bookingTime, durationHours)
                 .then((hasConflict) => {
                     if (hasConflict) {
-                        alert('❌ Этот дрон уже забронирован на выбранные дату и время! Выберите другое время.');
+                        alert('❌ Дрон занят в выбранное время! Выберите другое время или дату.');
                     } else {
                         // СОЗДАЕМ БРОНИРОВАНИЕ
-                        createBooking(deviceId, device.name, bookingDate, bookingTime, address, projectType, device.price || 0);
+                        createBooking(deviceId, device.name, bookingDate, bookingTime, durationHours, address, projectType, device.price || 0);
                     }
                 })
                 .catch((error) => {
@@ -109,39 +130,72 @@ function bookDevice(deviceId) {
     });
 }
 
-// Функция проверки конфликтов бронирований - УПРОЩЕННАЯ БЕЗ СТАТУСА
-function checkBookingConflict(deviceId, date, time) {
+// Функция проверки конфликтов бронирований С УЧЕТОМ ПРОДОЛЖИТЕЛЬНОСТИ
+function checkBookingConflict(deviceId, date, startTime, durationHours) {
     const db = firebase.firestore();
     
-    console.log("🔍 Проверяем конфликт для:", { deviceId, date, time });
+    console.log("🔍 Проверяем конфликт для:", { deviceId, date, startTime, durationHours });
     
+    // Получаем ВСЕ бронирования этого дрона на выбранную дату
     return db.collection("bookings")
         .where("deviceId", "==", deviceId)
         .where("date", "==", date)
-        .where("time", "==", time)
         .get()
         .then((querySnapshot) => {
-            console.log("📊 Найдено конфликтующих броней:", querySnapshot.size);
-            return !querySnapshot.empty; // true если есть конфликт, false если свободен
+            console.log("📊 Найдено броней на эту дату:", querySnapshot.size);
+            
+            const newBookingStart = timeToMinutes(startTime);
+            const newBookingEnd = newBookingStart + (durationHours * 60);
+            
+            let hasConflict = false;
+            
+            querySnapshot.forEach((doc) => {
+                const existingBooking = doc.data();
+                const existingStart = timeToMinutes(existingBooking.time);
+                const existingDuration = existingBooking.duration || 4; // По умолчанию 4 часа, если не указано
+                const existingEnd = existingStart + (existingDuration * 60);
+                
+                console.log("Существующая бронь:", {
+                    time: existingBooking.time,
+                    duration: existingDuration,
+                    start: existingStart,
+                    end: existingEnd
+                });
+                
+                // Проверяем пересечение интервалов
+                if ((newBookingStart >= existingStart && newBookingStart < existingEnd) ||
+                    (newBookingEnd > existingStart && newBookingEnd <= existingEnd) ||
+                    (newBookingStart <= existingStart && newBookingEnd >= existingEnd)) {
+                    hasConflict = true;
+                    console.log("❌ КОНФЛИКТ обнаружен!");
+                }
+            });
+            
+            console.log("Результат проверки конфликтов:", hasConflict);
+            return hasConflict;
         });
 }
 
 // Функция создания бронирования
-function createBooking(deviceId, deviceName, date, time, address, projectType, price) {
+function createBooking(deviceId, deviceName, date, time, duration, address, projectType, price) {
     const db = firebase.firestore();
+    
+    const endTime = minutesToTime(timeToMinutes(time) + (duration * 60));
     
     db.collection("bookings").add({
         deviceId: deviceId,
         deviceName: deviceName,
         date: date,
         time: time,
+        endTime: endTime,
+        duration: duration,
         address: address,
         projectType: projectType,
         price: price,
         createdAt: new Date(),
         bookingId: generateBookingId() // Уникальный ID брони
     }).then(() => {
-        alert(`✅ Дрон "${deviceName}" забронирован!\n📅 Дата: ${date}\n⏰ Время: ${time}\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
+        alert(`✅ Дрон "${deviceName}" забронирован!\n📅 Дата: ${date}\n⏰ Время: ${time}-${endTime} (${duration} часов)\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
         
         if (document.getElementById('calendar').classList.contains('active')) {
             loadCalendar();
@@ -280,10 +334,12 @@ function showDayDetails(date) {
         let bookingsHTML = '<div class="bookings-list">';
         querySnapshot.forEach((doc) => {
             const booking = doc.data();
+            const endTime = booking.endTime || minutesToTime(timeToMinutes(booking.time) + ((booking.duration || 4) * 60));
+            
             bookingsHTML += `
                 <div class="booking-item">
                     <strong>${booking.deviceName}</strong><br>
-                    <span>⏰ ${booking.time}</span><br>
+                    <span>⏰ ${booking.time} - ${endTime} (${booking.duration || 4}ч)</span><br>
                     <span>📍 ${booking.address}</span><br>
                     <span>🎯 ${booking.projectType || 'Не указан'}</span>
                 </div>
