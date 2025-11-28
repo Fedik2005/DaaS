@@ -43,25 +43,26 @@ function loadDevices() {
         querySnapshot.forEach((doc) => {
             const device = doc.data();
             
-            // Создаем красивую карточку с features
+            // Создаем красивую карточку
             const deviceCard = `
                 <div class="device-card">
-                    <img src="${device.image}" alt="${device.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;">
-                    <h3>${device.name}</h3>
-                    <p>${device.description}</p>
-                    
-                    <!-- Показываем features как список преимуществ -->
-                    <div class="device-features">
-                        ${formatFeatures(device.features)}
+                    <div class="device-image-container">
+                        <img src="${device.image}" alt="${device.name}" class="device-image">
                     </div>
-                    
-                    <p class="price" style="font-size: 1.5em; font-weight: bold; color: #007bff;">
-                        ${device.price || 'Цена по запросу'}
-                    </p>
-                    
-                    <button onclick="bookDevice('${doc.id}')">
-                        ${device.isAvailable ? 'Забронировать' : 'Недоступно'}
-                    </button>
+                    <div class="device-info">
+                        <h3>${device.name}</h3>
+                        <p class="device-description">${device.description}</p>
+                        
+                        <!-- Features без галочек, обычным текстом -->
+                        <div class="device-features">
+                            <h4>Характеристики:</h4>
+                            <p class="features-text">${device.features}</p>
+                        </div>
+                        
+                        <button onclick="bookDevice('${doc.id}')" class="book-button">
+                            ${device.isAvailable ? '🛸 Забронировать дрон' : '❌ Недоступно'}
+                        </button>
+                    </div>
                 </div>
             `;
             devicesContainer.innerHTML += deviceCard;
@@ -69,6 +70,45 @@ function loadDevices() {
     }).catch((error) => {
         console.error("Error loading drones:", error);
         document.getElementById('devicesContainer').innerHTML = '<p>Ошибка загрузки дронов</p>';
+    });
+}
+
+function bookDevice(deviceId) {
+    const db = firebase.firestore();
+    
+    db.collection("drones").doc(deviceId).get().then((doc) => {
+        const device = doc.data();
+        
+        if (!device.isAvailable) {
+            alert('❌ Этот дрон временно недоступен для бронирования');
+            return;
+        }
+        
+        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
+        const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "10:00");
+        const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
+        const projectType = prompt("Тип проекта:", "Топографическая съёмка");
+        
+        if (bookingDate && bookingTime && address && projectType) {
+            db.collection("bookings").add({
+                deviceId: deviceId,
+                deviceName: device.name,
+                date: bookingDate,
+                time: bookingTime,
+                address: address,
+                projectType: projectType,
+                price: device.price || 0,
+                status: "active",
+                createdAt: new Date()
+            }).then(() => {
+                alert(`✅ Дрон "${device.name}" забронирован!\n📅 Дата: ${bookingDate}\n⏰ Время: ${bookingTime}\n📍 Объект: ${address}\n Проект: ${projectType}`);
+                
+                if (document.getElementById('calendar').classList.contains('active')) {
+                    loadCalendar();
+                    loadCalendarStats();
+                }
+            });
+        }
     });
 }
 
