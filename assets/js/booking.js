@@ -140,13 +140,20 @@ function bookDevice(deviceId) {
             return;
         }
         
-        const bookingTime = prompt("Введите время начала (ЧЧ:ММ):\n• Доступное время: с 08:00 до 18:00", "10:00");
+        const bookingTime = prompt("Введите время начала (ЧЧ:ММ):\n• Доступное время: с 08:00 до 18:00\n• Последнее время для начала: 14:00", "10:00");
         
         if (!bookingTime) return;
         
         // ПРОВЕРКА ВРЕМЕНИ
         if (!isValidTime(bookingTime)) {
             alert('❌ Неверное время! Бронирование доступно только с 08:00 до 18:00.');
+            return;
+        }
+        
+        // ПРОВЕРКА ЧТО БРОНИРОВАНИЕ НАЧИНАЕТСЯ НЕ ПОЗЖЕ 14:00
+        const startMinutes = timeToMinutes(bookingTime);
+        if (startMinutes > 14 * 60) {
+            alert('❌ Слишком поздно для начала съёмки! Последнее доступное время для начала: 14:00 (чтобы закончить к 18:00).');
             return;
         }
         
@@ -403,12 +410,18 @@ function showDayDetails(date) {
             const duration = 4;
             const endTime = minutesToTime(timeToMinutes(booking.time) + (duration * 60));
             
+            // ПРОВЕРЯЕМ ВАЛИДНОСТЬ ВРЕМЕНИ СУЩЕСТВУЮЩЕЙ БРОНИ
+            const startMinutes = timeToMinutes(booking.time);
+            const isValidBookingTime = startMinutes >= 8 * 60 && startMinutes <= 14 * 60;
+            const warningIcon = isValidBookingTime ? '' : '⚠️ ';
+            
             bookingsHTML += `
-                <div class="booking-item">
-                    <strong>${booking.deviceName}</strong><br>
+                <div class="booking-item" style="${isValidBookingTime ? '' : 'border-left: 4px solid #ffc107; background: #fff3cd;'}">
+                    <strong>${warningIcon}${booking.deviceName}</strong><br>
                     <span>⏰ ${booking.time} - ${endTime} (${duration}ч)</span><br>
                     <span>📍 ${booking.address}</span><br>
                     <span>🎯 ${booking.projectType || 'Не указан'}</span>
+                    ${!isValidBookingTime ? '<br><span style="color: #856404; font-size: 0.9em;">⚠️ Вне рабочего времени</span>' : ''}
                 </div>
             `;
         });
