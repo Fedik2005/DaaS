@@ -24,15 +24,15 @@
 
         <!-- ВКЛАДКА КАТАЛОГА -->
         <div id="catalog" class="tab-content active">
-            <div class="filters">
-                <select id="typeFilter">
-                    <option value="">Все типы</option>
-                    <option value="monitor">Мониторы</option>
-                    <option value="projector">Проекторы</option>
-                    <option value="drone">Дроны</option>
-                </select>
-                <input type="text" id="search" placeholder="Поиск устройств...">
-            </div>
+         <div class="filters">
+            <select id="typeFilter">
+                <option value="">Все дроны</option>
+                <option value="topographia">Топографическая съёмка</option>
+                <option value="laser">Лазерное сканирование</option>
+                <option value="photogrammetry">Фотограмметрия</option>
+            </select>
+            <input type="text" id="search" placeholder="Поиск дронов...">
+        </div>
             
             <div class="devices-grid" id="devicesContainer">
                 <!-- Сюда загрузятся устройства из Firebase -->
