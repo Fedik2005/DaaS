@@ -342,3 +342,56 @@
         flex-direction: column;
     }
 }
+/* Стили для features дронов */
+.device-features {
+    margin: 15px 0;
+    text-align: left;
+}
+
+.features-list {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.feature-item {
+    padding: 5px 0;
+    font-size: 14px;
+    color: #495057;
+}
+
+.feature-item:not(:last-child) {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 8px;
+}
+
+/* Улучшенные стили для карточек дронов */
+.device-card {
+    position: relative;
+}
+
+.device-card:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+/* Стили для разных типов дронов */
+.device-card[data-type="topographia"]:before {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.device-card[data-type="laser"]:before {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+
+/* Стили для недоступных устройств */
+.device-card button:disabled {
+    background: #6c757d !important;
+    cursor: not-allowed;
+}
