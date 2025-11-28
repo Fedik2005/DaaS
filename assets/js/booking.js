@@ -86,6 +86,35 @@ function minutesToTime(totalMinutes) {
     return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 }
 
+// Функция проверки валидности даты
+function isValidDate(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Проверяем что дата корректна и не в прошлом
+    return date instanceof Date && !isNaN(date) && date >= today;
+}
+
+// Функция проверки валидности времени
+function isValidTime(timeString) {
+    const timeRegex = /^([01]?[0-9]|2[0-3]):([0-5][0-9])$/;
+    if (!timeRegex.test(timeString)) return false;
+    
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    
+    // Время должно быть между 08:00 и 18:00
+    return totalMinutes >= 8 * 60 && totalMinutes <= 18 * 60;
+}
+
+// Функция получения максимальной доступной даты (текущий год + 1)
+function getMaxAvailableDate() {
+    const now = new Date();
+    const maxDate = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
+    return maxDate.toISOString().split('T')[0];
+}
+
 // ОСНОВНАЯ ФУНКЦИЯ БРОНИРОВАНИЯ
 function bookDevice(deviceId) {
     const db = firebase.firestore();
@@ -98,14 +127,42 @@ function bookDevice(deviceId) {
             return;
         }
         
-        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
-        const bookingTime = prompt("Введите время начала (ЧЧ:ММ):", "10:00");
+        const today = new Date().toISOString().split('T')[0];
+        const maxDate = getMaxAvailableDate();
+        
+        const bookingDate = prompt(`Введите дату бронирования (ГГГГ-ММ-ДД):\n• Сегодня: ${today}\n• Бронирование доступно на 1 год вперед`, today);
+        
+        if (!bookingDate) return;
+        
+        // ПРОВЕРКА ДАТЫ
+        if (!isValidDate(bookingDate)) {
+            alert('❌ Неверная дата! Дата должна быть корректной, не из прошлого и не дальше 1 года.');
+            return;
+        }
+        
+        const bookingTime = prompt("Введите время начала (ЧЧ:ММ):\n• Доступное время: с 08:00 до 18:00", "10:00");
+        
+        if (!bookingTime) return;
+        
+        // ПРОВЕРКА ВРЕМЕНИ
+        if (!isValidTime(bookingTime)) {
+            alert('❌ Неверное время! Бронирование доступно только с 08:00 до 18:00.');
+            return;
+        }
+        
         const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
         const projectType = prompt("Тип проекта:", "Топографическая съёмка");
         
         if (bookingDate && bookingTime && address && projectType) {
             // ДЛЯ ДРОНОВ СТАНДАРТНАЯ ПРОДОЛЖИТЕЛЬНОСТЬ 4 ЧАСА
             const durationHours = 4;
+            const endTime = minutesToTime(timeToMinutes(bookingTime) + (durationHours * 60));
+            
+            // ПРОВЕРКА ЧТО БРОНИРОВАНИЕ НЕ ВЫХОДИТ ЗА 18:00
+            if (timeToMinutes(endTime) > 18 * 60) {
+                alert('❌ Бронирование выходит за пределы рабочего времени! Последнее доступное время для начала: 14:00 (чтобы закончить к 18:00).');
+                return;
+            }
             
             // ПРОВЕРЯЕМ НАЛИЧИЕ КОНФЛИКТУЮЩИХ БРОНИРОВАНИЙ
             checkBookingConflict(deviceId, bookingDate, bookingTime, durationHours)
