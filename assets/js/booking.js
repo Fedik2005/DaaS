@@ -73,6 +73,7 @@ function loadDevices() {
     });
 }
 
+// ОСНОВНАЯ ФУНКЦИЯ БРОНИРОВАНИЯ
 function bookDevice(deviceId) {
     const db = firebase.firestore();
     
@@ -97,7 +98,7 @@ function bookDevice(deviceId) {
                         alert('❌ Этот дрон уже забронирован на выбранные дату и время! Выберите другое время.');
                     } else {
                         // СОЗДАЕМ БРОНИРОВАНИЕ
-                        createBooking(deviceId, device.name, bookingDate, bookingTime, address, projectType, device.price);
+                        createBooking(deviceId, device.name, bookingDate, bookingTime, address, projectType, device.price || 0);
                     }
                 })
                 .catch((error) => {
@@ -108,17 +109,19 @@ function bookDevice(deviceId) {
     });
 }
 
-// Функция проверки конфликтов бронирований
+// Функция проверки конфликтов бронирований - УПРОЩЕННАЯ БЕЗ СТАТУСА
 function checkBookingConflict(deviceId, date, time) {
     const db = firebase.firestore();
+    
+    console.log("🔍 Проверяем конфликт для:", { deviceId, date, time });
     
     return db.collection("bookings")
         .where("deviceId", "==", deviceId)
         .where("date", "==", date)
         .where("time", "==", time)
-        .where("status", "in", ["active", "confirmed"]) // Проверяем только активные брони
         .get()
         .then((querySnapshot) => {
+            console.log("📊 Найдено конфликтующих броней:", querySnapshot.size);
             return !querySnapshot.empty; // true если есть конфликт, false если свободен
         });
 }
@@ -134,8 +137,7 @@ function createBooking(deviceId, deviceName, date, time, address, projectType, p
         time: time,
         address: address,
         projectType: projectType,
-        price: price || 0,
-        status: "active",
+        price: price,
         createdAt: new Date(),
         bookingId: generateBookingId() // Уникальный ID брони
     }).then(() => {
@@ -156,62 +158,6 @@ function generateBookingId() {
     return 'BK' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
 }
 
-// Функция для красивого форматирования features
-function formatFeatures(featuresText) {
-    if (!featuresText) return '';
-    
-    // Разделяем features по символу + и создаем список
-    const featuresArray = featuresText.split('+').filter(f => f.trim() !== '');
-    
-    if (featuresArray.length === 0) return '';
-    
-    let featuresHTML = '<div class="features-list">';
-    featuresArray.forEach(feature => {
-        featuresHTML += `<div class="feature-item">✅ ${feature.trim()}</div>`;
-    });
-    featuresHTML += '</div>';
-    
-    return featuresHTML;
-}
-
-function bookDevice(deviceId) {
-    const db = firebase.firestore();
-    
-    db.collection("drones").doc(deviceId).get().then((doc) => {
-        const device = doc.data();
-        
-        if (!device.isAvailable) {
-            alert('❌ Этот дрон временно недоступен для бронирования');
-            return;
-        }
-        
-        const bookingDate = prompt("Введите дату бронирования (ГГГГ-ММ-ДД):", new Date().toISOString().split('T')[0]);
-        const bookingTime = prompt("Введите время бронирования (ЧЧ:ММ):", "10:00");
-        const address = prompt("Адрес объекта для съёмки:", "Москва, ул. Примерная, 123");
-        const projectType = prompt("Тип проекта:", "Топографическая съёмка");
-        
-        if (bookingDate && bookingTime && address && projectType) {
-            db.collection("bookings").add({
-                deviceId: deviceId,
-                deviceName: device.name,
-                date: bookingDate,
-                time: bookingTime,
-                address: address,
-                projectType: projectType,
-                price: device.price || 0,
-                status: "active",
-                createdAt: new Date()
-            }).then(() => {
-                alert(`✅ Дрон "${device.name}" забронирован!\n📅 Дата: ${bookingDate}\n⏰ Время: ${bookingTime}\n📍 Объект: ${address}\n🎯 Проект: ${projectType}`);
-                
-                if (document.getElementById('calendar').classList.contains('active')) {
-                    loadCalendar();
-                    loadCalendarStats();
-                }
-            });
-        }
-    });
-}
 // ===== КАЛЕНДАРЬ =====
 function loadCalendar() {
     const monthNames = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
@@ -339,7 +285,7 @@ function showDayDetails(date) {
                     <strong>${booking.deviceName}</strong><br>
                     <span>⏰ ${booking.time}</span><br>
                     <span>📍 ${booking.address}</span><br>
-                    <span>💵 ${booking.price} ₽</span>
+                    <span>🎯 ${booking.projectType || 'Не указан'}</span>
                 </div>
             `;
         });
@@ -358,7 +304,7 @@ function loadCalendarStats() {
         
         let totalRevenue = 0;
         querySnapshot.forEach((doc) => {
-            totalRevenue += doc.data().price;
+            totalRevenue += doc.data().price || 0;
         });
         document.getElementById('todayRevenue').textContent = totalRevenue + ' ₽';
     });
