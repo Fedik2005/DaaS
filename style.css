@@ -934,7 +934,7 @@ body {
     height: 12px;
     border-radius: 50%;
     border: none;
-    background: var(--gray-light);
+    background: var(--gray);
     cursor: pointer;
     transition: var(--transition);
 }
