@@ -1,7 +1,7 @@
 class AeroScan {
     constructor() {
         this.currentService = 'monitoring';
-        this.currentPrice = 200000;
+        this.currentPrice = 15000;
         this.calculatorData = {
             area: 10000, // в квадратных метрах
             height: 120,
@@ -485,79 +485,44 @@ class AeroScan {
     }
 }
 
-// Добавьте этот код в КОНЕЦ существующего файла script.js
-
-// Мобильная адаптивность
-document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем мобильное устройство
-    const isMobile = window.innerWidth <= 768;
-    
-    if (isMobile) {
-        // Улучшаем карусель для мобильных
-        const carousel = document.getElementById('pricingCarousel');
-        if (carousel) {
-            carousel.style.overflowX = 'auto';
-            carousel.style.webkitOverflowScrolling = 'touch';
-            carousel.style.scrollSnapType = 'x mandatory';
-        }
-        
-        // Улучшаем навигацию
-        const navToggle = document.getElementById('navToggle');
-        const navMenu = document.getElementById('navMenu');
-        
-        if (navToggle && navMenu) {
-            // Закрытие меню при клике на ссылку
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    navMenu.style.display = 'none';
-                    navToggle.classList.remove('active');
-                });
-            });
-            
-            // Предотвращаем закрытие при клике внутри меню
-            navMenu.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-        }
-        
-        // Улучшаем слайдеры
-        document.querySelectorAll('.param-slider').forEach(slider => {
-            slider.style.height = '20px';
-        });
-        
-        // Улучшаем калькулятор
-        const calculatorControls = document.querySelector('.calculator-controls');
-        if (calculatorControls) {
-            calculatorControls.style.overflowY = 'auto';
-            calculatorControls.style.maxHeight = '70vh';
-        }
-        
-        // Адаптивная высота героя
-        function setHeroHeight() {
-            const hero = document.querySelector('.hero');
-            if (hero) {
-                hero.style.minHeight = window.innerHeight + 'px';
-            }
-        }
-        
-        setHeroHeight();
-        window.addEventListener('resize', setHeroHeight);
-    }
-    
-    // Фикс для iOS 100vh
-    function setVH() {
-        let vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-    }
-    
-    setVH();
-    window.addEventListener('resize', setVH);
+// Initialize the website
+document.addEventListener('DOMContentLoaded', () => {
+    new AeroScan();
 });
 
-// Улучшение для карусели на мобильных
-window.addEventListener('resize', function() {
-    const carousel = document.getElementById('pricingCarousel');
-    if (carousel && window.innerWidth <= 768) {
-        carousel.style.overflowX = 'auto';
+// Additional animations
+document.addEventListener('DOMContentLoaded', () => {
+    const droneModel = document.getElementById('droneModel');
+    if (droneModel) {
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 10;
+            const y = (e.clientY / window.innerHeight - 0.5) * 10;
+            droneModel.style.transform = `translate(${x}px, ${y}px) rotate(${x}deg)`;
+        });
     }
+});
+
+// Parallax effect
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    const parallax = document.querySelector('.hero-background');
+    if (parallax) {
+        parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+    }
+});
+
+// Mobile menu close on link click
+document.addEventListener('DOMContentLoaded', () => {
+    const navLinks = document.querySelectorAll('.nav-link');
+    const navMenu = document.getElementById('navMenu');
+    const navToggle = document.getElementById('navToggle');
+    
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if (window.innerWidth <= 768 && navMenu && navToggle) {
+                navMenu.style.display = 'none';
+                navToggle.classList.remove('active');
+            }
+        });
+    });
 });
