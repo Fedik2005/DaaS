@@ -1710,8 +1710,16 @@ body {
         min-height: 100vh;
     }
     
-    .floating-drone {
-        display: none !important; /* На мобильных убираем летающий дрон */
+   .floating-drone {
+        display: block !important;
+        animation: droneDiagonalFlyMobile 20s ease-in-out infinite !important;
+        width: 200px !important;
+        height: 200px !important;
+    }
+    
+    .drone-3d {
+        width: 200px !important;
+        height: 200px !important;
     }
     
     .hero-title {
