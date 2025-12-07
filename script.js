@@ -1,7 +1,7 @@
 class AeroScan {
     constructor() {
         this.currentService = 'monitoring';
-        this.currentPrice = 15000;
+        this.currentPrice = 200000;
         this.calculatorData = {
             area: 10000, // в квадратных метрах
             height: 120,
